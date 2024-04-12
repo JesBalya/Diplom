@@ -12,11 +12,8 @@ namespace Diplom.Models.Account
         public string Password { get; set; }
         public Role Role { get; set; }
 
+        public Subscription Subscription { get; set; }
 
-
-        public Student Student { get; set; }
-
-        public Professor Professor { get; set; }
 
     }
 }

@@ -12,11 +12,9 @@ namespace Diplom.AppDbContext
             Database.EnsureCreated();
         }
 
-        public DbSet<Group> Groups { get; set; }
         public DbSet<Consultation> Consultations { get; set; }
-        public DbSet<Student> Students { get; set; }
-        public DbSet<Professor> Professors { get; set;}
         public DbSet<User> Users { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
 
 
 
@@ -47,41 +45,36 @@ namespace Diplom.AppDbContext
                 builder.Property(x => x.Password).IsRequired();
                 builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
 
-                builder.HasOne(x => x.Student)
-                .WithOne(x => x.User)
-                .HasPrincipalKey<User>(x => x.Id)
-                .OnDelete(DeleteBehavior.Cascade);
-
-                builder.HasOne(x => x.Professor)
-                .WithOne(x => x.User)
-                .HasPrincipalKey<User>(x => x.Id)
-                .OnDelete(DeleteBehavior.Cascade);
+                builder.HasOne(x => x.Subscription).WithOne(x => x.User)
+                .HasPrincipalKey<User>(x => x.Id).OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Group>(builder =>
+            modelBuilder.Entity<Subscription>(builder =>
             {
-                builder.ToTable("Groups").HasKey(x => x.Id);
+                builder.ToTable("Substriptions").HasKey(x => x.Id);
+                builder.HasData(
+                new Subscription
+                {
+                    Id = 1,
+                    UserId = 1,
+                    Consultations = new List<Consultation>()
+                },
+                new Subscription
+                {
+                    Id = 2,
+                    UserId = 2,
+                    Consultations = new List<Consultation>()
+                });
 
-                builder.HasMany(x => x.Students).WithOne(x => x.Group).HasForeignKey(x => x.GroupId);
-                builder.HasMany(x => x.Consultations).WithOne(x => x.Group).HasForeignKey(x => x.GroupId);
-
+                builder.HasMany(x => x.Consultations).WithMany(x => x.Subscriptions);
             });
+
 
             modelBuilder.Entity<Consultation>(builder =>
             {
                 builder.ToTable("Consultations").HasKey(x => x.Id);
             });
 
-            modelBuilder.Entity<Professor>(builder =>
-            {
-                builder.ToTable("Professors").HasKey(x => x.Id);
-                builder.HasMany(x => x.Consultations).WithOne(x => x.Professor).HasForeignKey(x => x.ProfessorId);
-            });
-
-            modelBuilder.Entity<Student>(builder =>
-            {
-                builder.ToTable("Students").HasKey(x => x.Id);
-            });
 
         }
 

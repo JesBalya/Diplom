@@ -15,6 +15,7 @@
              <li><a class="nav-link px-2 text-black" asp-controller="Search" asp-action="Search">Подписки</a></li>
             @if (User.Identity.IsAuthenticated)
             {
+                <li><a class="nav-link px-2 text-black" asp-controller="Home" asp-action="AddConsultation">Добавить консультацию</a></li>
                 <form method="post" asp-controller="Account" asp-action="Logout">
                     <input class="btn btn-outline-dark me-2" type="submit" value="Выход" />
                 </form>

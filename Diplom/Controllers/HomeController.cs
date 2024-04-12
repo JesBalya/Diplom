@@ -45,13 +45,15 @@ namespace Diplom.Controllers
 
         public IActionResult Index()
         {
-            return View(_context.Users.ToList());
+            return View(_context.Consultations.ToList());
         }
 
         public IActionResult Privacy()
         {
             return View();
         }
+
+        public IActionResult GetConsultation(int id) => View(_context.Consultations.FirstOrDefault(x => x.Id == id));
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
