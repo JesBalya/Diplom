@@ -16,7 +16,7 @@ namespace Diplom.Controllers
         {
             _accountService = accountService;
         }
-
+        
         [HttpGet]
         public IActionResult Register() => View();
 

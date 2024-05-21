@@ -1,6 +1,7 @@
 ﻿using Diplom.AppDbContext;
 using Diplom.Models.Account;
 using Diplom.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Diplom.Services.Implementations.Repositories
 {
@@ -36,6 +37,12 @@ namespace Diplom.Services.Implementations.Repositories
             await _context.SaveChangesAsync();
 
             return entity;
+        }
+
+        public async Task<int> GetIdByString(string Name)
+        {
+            var result = await _context.Users.FirstOrDefaultAsync(x => x.Name == Name);
+            return result.Id;
         }
 
     }

@@ -33,13 +33,14 @@ namespace Diplom.Services.Implementations
                         Description = "Пользователь с таким логином уже есть",
                     };             
                 }
-
+                Enum.TryParse<Role>(model.Role, out Role bebra);
                 user = new User()
-                {
-                    Name = model.Name,
-                    Role = Role.Professor,
-                    Password = HashPasswordHelper.HashPassword(model.Password),
-                };
+                    {
+                        Name = model.Name,
+                        Role = bebra,
+                        Password = HashPasswordHelper.HashPassword(model.Password),
+                    };
+                
                 await _userRepository.Create(user);
                 
                 var result = Authenticate(user);

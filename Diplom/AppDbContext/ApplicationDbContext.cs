@@ -31,14 +31,14 @@ namespace Diplom.AppDbContext
                         Id = 1,
                         Name = "admin",
                         Password = HashPasswordHelper.HashPassword("bebra"),
-                        Role = Role.Professor
+                        Role = Role.Admin
                     },
                     new User()
                     {
                         Id = 2,
                         Name = "testUser",
                         Password = HashPasswordHelper.HashPassword("12345"),
-                        Role = Role.Student
+                        Role = Role.User
                     }
                 });
                 builder.Property(x => x.Id).ValueGeneratedOnAdd();

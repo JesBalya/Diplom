@@ -9,6 +9,5 @@ namespace Diplom.Services.Interfaces
         Task<IBaseResponse<IEnumerable<UserViewModel>>> GetUsers();
         Task<IBaseResponse<bool>> DeleteUser(int id);
         IBaseResponse<Dictionary<int, string>> GetRoles();
-
     }
 }

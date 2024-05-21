@@ -2,12 +2,17 @@
 @{
     ViewData["Title"] = "Search";
 }
-
-<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-    <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
-</form>
+@model List<Diplom.Models.Entity.Consultation>;
 
 <div class="text-center">
     <h1 class="display-4">Консультации</h1>
 </div>
-
+@foreach (var cons in Model){
+<div class="text-center" style="height:100%">
+    <div style="padding-top: 40px; padding-bottom: 40px">
+        <h1>@cons.Name</h1>
+        <p>Описание: @cons.Description</p>
+        <p>Дата: @cons.Date</p>
+    </div>
+</div>
+}

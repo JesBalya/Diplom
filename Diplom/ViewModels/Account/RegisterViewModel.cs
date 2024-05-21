@@ -19,5 +19,7 @@ namespace Diplom.ViewModels.Account
         [Compare("Password", ErrorMessage = "Пароли не совпадают")]
         public string PasswordConfirm { get; set;}
 
+        [AllowedValues("Admin", "User", ErrorMessage = "Введите Admin или User")]
+        public string Role { get; set; } = "User";
     }
 }

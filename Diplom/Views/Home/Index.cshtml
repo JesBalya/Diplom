@@ -6,11 +6,16 @@
 
 
 <div class="text-center">
-    @if (User.IsInRole("Professor"))
+    @if (User.IsInRole("Admin"))
     {
         <div class="text-end">
             <button href="/Admin" type="button" class="btn btn-outline-dark me-2">
                 <a class="px-2 text-black" style="text-decoration:none" asp-controller="Home" asp-action="GetUsers">Управление</a>
+            </button>
+        </div>
+        <div class="text-end">
+            <button href="/Admin" type="button" class="btn btn-outline-dark me-2">
+                <a class="px-2 text-black" style="text-decoration:none" asp-controller="Account" asp-action="Register">Добавить учетную запись администратора</a>
             </button>
         </div>
     }
