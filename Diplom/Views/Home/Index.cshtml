@@ -28,18 +28,15 @@
             <div style="margin-left:250px">
              <div class="card text-center" style="width: 50rem;">
                    <ul class="list-group list-group-flush">
-                      @for(int i = 0; i < 2; i++){
+                      @foreach(var cons in Model){
                          
                            <li class="list-group-item">
-                                <p style="font-family: cursive">@Model[i].Name</p>
+                                <p style="font-family: cursive">@cons.Name</p>
                                     <button type="button" class="btn btn-info">
-                                        <a class="px-2 text-black" style="text-decoration:none" asp-controller="Home" asp-action="GetConsultation" asp-route-id="@Model[i].Id">Посмотреть</a>
+                                        <a class="px-2 text-black" style="text-decoration:none" asp-controller="Home" asp-action="GetConsultation" asp-route-id="@cons.Id">Посмотреть</a>
                                     </button>
-                           </li>
-
-                              
+                           </li>          
                        }
-
                  </ul>
              </div>
             </div>

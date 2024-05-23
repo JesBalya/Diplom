@@ -21,6 +21,7 @@ namespace Diplom
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISearchService, SearchService>();
+            services.AddScoped<IConsultationService, ConsultationService>();
         }
     }
 }

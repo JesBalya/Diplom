@@ -12,11 +12,14 @@ namespace Diplom.Services.Implementations
     public class AccountService: IAccountService
     {
         private readonly IBaseRepository<User> _userRepository;
-        
+        private readonly IBaseRepository<Subscription> _subRepository;
         private readonly ILogger<AccountService> _logger;
 
-        public AccountService(IBaseRepository<User> userRepository, ILogger<AccountService> logger)
+        public AccountService(IBaseRepository<User> userRepository, 
+            ILogger<AccountService> logger,
+            IBaseRepository<Subscription> subRepository)
         {
+            _subRepository = subRepository;
             _userRepository = userRepository;
             _logger = logger;
         }
@@ -42,6 +45,13 @@ namespace Diplom.Services.Implementations
                     };
                 
                 await _userRepository.Create(user);
+
+                var sub = new Subscription()
+                {
+                    UserId = user.Id,
+                    Consultations = new List<Consultation>(),
+                };
+                await _subRepository.Create(sub);
                 
                 var result = Authenticate(user);
 

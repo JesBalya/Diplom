@@ -26,7 +26,6 @@ namespace Diplom.Services.Implementations
         {
             try
             {
-               
                 var respronse = await _userRepository.GetAll()
                     .Include(x => x.Subscription)
                     .ThenInclude(x => x.Consultations)

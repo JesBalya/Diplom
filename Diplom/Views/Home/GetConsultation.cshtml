@@ -8,7 +8,11 @@
         <h1>@Model.Name</h1>
         <p>Описание: @Model.Description</p>
         <p>Дата: @Model.Date</p>
-        <button type="button" class="btn btn-success me-2">Записаться</button>
+        <form asp-controller="Home" asp-action="Sub" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-sm btn-danger">
+                Записаться
+            </button>
+        </form>
     </div>
     
 </div>
