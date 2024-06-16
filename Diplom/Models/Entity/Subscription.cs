@@ -10,6 +10,6 @@ namespace Diplom.Models.Entity
 
         public User User { get; set; }
 
-        public List<Consultation> Consultations { get; set; }
+        public List<Consultation>? Consultations { get; set; } = new List<Consultation>();
     }
 }

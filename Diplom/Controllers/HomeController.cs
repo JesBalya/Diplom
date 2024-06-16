@@ -36,9 +36,10 @@ namespace Diplom.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int userId)
         {
-            var response = await _userService.DeleteUser(id);
+            var response = await _userService.DeleteUser(userId);
+            
             if (response.StatusCode == Models.Account.StatusCode.OK)
             {
                 return RedirectToAction("GetUsers");
@@ -58,7 +59,13 @@ namespace Diplom.Controllers
 
         public IActionResult GetConsultation(int id) => View(_context.Consultations.FirstOrDefault(x => x.Id == id));
 
-        public IActionResult Cons() => View();
+        public IActionResult AddCons() => View();
+
+        public IActionResult MyCons(int id)
+        {
+
+
+        }
 
         public async Task<IActionResult> AddConsultation(ConsultationViewModel consultation)
         {

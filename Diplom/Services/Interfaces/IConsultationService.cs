@@ -1,4 +1,5 @@
-﻿using Diplom.ViewModels;
+﻿using Diplom.Models.Entity;
+using Diplom.ViewModels;
 
 namespace Diplom.Services.Interfaces
 {
@@ -6,5 +7,6 @@ namespace Diplom.Services.Interfaces
     {
         Task<IBaseResponse<bool>> AddCosultation(ConsultationViewModel model);
         Task<IBaseResponse<bool>> Sub(int consId, string userName);
+        Task<IBaseResponse<bool>> DeleteConsultation(int consId);
     }
 }

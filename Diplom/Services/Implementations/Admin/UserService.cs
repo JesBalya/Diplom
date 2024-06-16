@@ -13,13 +13,15 @@ namespace Diplom.Services.Implementations.Admin
     {
         private readonly ILogger<UserService> _logger;
         private readonly IBaseRepository<User> _userRepository;
-        
+        private readonly IBaseRepository<Subscription> _subscriptionRepository;
+        private readonly IBaseRepository<Consultation> _consultationRepository;
 
-        public UserService(ILogger<UserService> logger, IBaseRepository<User> userReposytory)
+        public UserService(ILogger<UserService> logger, IBaseRepository<User> userReposytory, IBaseRepository<Consultation> consultations, IBaseRepository<Subscription> subscriptionRepository)
         {
             _logger = logger;
             _userRepository = userReposytory;
-            
+            _consultationRepository = consultations;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         public async Task<IBaseResponse<User>> Create(UserViewModel model)
@@ -45,6 +47,13 @@ namespace Diplom.Services.Implementations.Admin
 
                 await _userRepository.Create(user);
 
+                var sub = new Subscription()
+                {
+                    UserId = user.Id,
+                    User = user,
+                };
+                
+                await _subscriptionRepository.Create(sub);
                 return new BaseResponse<User>()
                 {
                     Data = user,
@@ -68,7 +77,11 @@ namespace Diplom.Services.Implementations.Admin
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
+                var user = await _userRepository.GetAll()
+                    .Include(x => x.Subscription)
+                    .ThenInclude(x => x.Consultations)
+                    .Include(x=> x.MyConsultations)
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (user == null)
                 {
@@ -78,6 +91,7 @@ namespace Diplom.Services.Implementations.Admin
                         Data = false
                     };
                 }
+                
                 await _userRepository.Delete(user);
                 _logger.LogInformation($"[UserService.DeleteUser] пользователь удален");
 

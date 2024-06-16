@@ -14,6 +14,6 @@ namespace Diplom.Models.Account
 
         public Subscription Subscription { get; set; }
 
-
+        public ICollection<Consultation> MyConsultations { get; set; } = new List<Consultation>();
     }
 }

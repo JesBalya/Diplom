@@ -47,6 +47,8 @@ namespace Diplom.AppDbContext
 
                 builder.HasOne(x => x.Subscription).WithOne(x => x.User)
                 .HasPrincipalKey<User>(x => x.Id).OnDelete(DeleteBehavior.Cascade);
+
+                builder.HasMany(x => x.MyConsultations).WithOne(x => x.User).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Subscription>(builder =>
@@ -66,7 +68,12 @@ namespace Diplom.AppDbContext
                     Consultations = new List<Consultation>()
                 });
 
-                builder.HasMany(x => x.Consultations).WithMany(x => x.Subscriptions);
+                builder.HasMany(x => x.Consultations).WithMany(x => x.Subscriptions)
+                       .UsingEntity<Dictionary<string, object>>(
+                    "ConsultationSubscription",
+                    j => j.HasOne<Consultation>().WithMany().HasForeignKey("ConsultationId").OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<Subscription>().WithMany().HasForeignKey("SubscriptionId").OnDelete(DeleteBehavior.Restrict)
+                    );
             });
 
 

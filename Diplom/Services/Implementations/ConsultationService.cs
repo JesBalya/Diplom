@@ -35,8 +35,10 @@ namespace Diplom.Services.Implementations
                     User = user,
                     UserId = user.Id,
                 };
+                user.MyConsultations.Add(consultation);
 
                 await _consultationRepository.Create(consultation);
+                await _userRepository.Update(user);
 
                 return new BaseResponse<bool>()
                 {
@@ -48,6 +50,29 @@ namespace Diplom.Services.Implementations
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"[AddConsultation]: {ex.Message}");
+                return new BaseResponse<bool>()
+                {
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
+        public async Task<IBaseResponse<bool>> DeleteConsultation(int consId)
+        {
+            try
+            {
+                var cons = await _consultationRepository.GetAll().FirstOrDefaultAsync(x => x.Id == consId);
+                await _consultationRepository.Delete(cons);
+                
+                return new BaseResponse<bool>()
+                {
+                    Data= true,
+                    StatusCode = StatusCode.OK
+                };
+            }
+            catch (Exception ex)
+            {
                 return new BaseResponse<bool>()
                 {
                     Description = ex.Message,
@@ -87,5 +112,6 @@ namespace Diplom.Services.Implementations
                 };
             }
         }
+
     }
 }
