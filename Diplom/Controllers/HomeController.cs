@@ -61,10 +61,17 @@ namespace Diplom.Controllers
 
         public IActionResult AddCons() => View();
 
-        public IActionResult MyCons(int id)
+        public async Task<IActionResult> MyCons()
         {
+            var userName = User.Identity.Name;
 
+            var response = await _consultationService.GetMyCons(userName);
 
+            if(response.StatusCode == Diplom.Models.Account.StatusCode.OK)
+            {
+                return View(response.Data.ToList());
+            }
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> AddConsultation(ConsultationViewModel consultation)
@@ -92,6 +99,40 @@ namespace Diplom.Controllers
                 return RedirectToAction("Index");
             }
             return View("Index");
+
+        }
+        
+        public async Task<IActionResult> DeleteCons(int consId)
+        {
+            var response = await _consultationService.DeleteConsultation(consId);
+
+            if (response.StatusCode == Models.Account.StatusCode.OK)
+            {
+                return RedirectToAction("MyCons");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> UpdateCons(int consId)
+        {
+            var response = await _consultationService.GetCons(consId);
+
+            if(response.StatusCode == Models.Account.StatusCode.OK)
+            {
+                return View(response.Data);
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> UpdateConsToDb(int consId, ConsultationViewModel consultation)
+        {
+            consultation.Id = consId;
+            var response = await _consultationService.UpdateCons(consultation);
+            if(response.StatusCode == Models.Account.StatusCode.OK)
+            {
+                return RedirectToAction("MyCons");
+            }
+            return RedirectToAction("View");
 
         }
 

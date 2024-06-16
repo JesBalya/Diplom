@@ -113,5 +113,88 @@ namespace Diplom.Services.Implementations
             }
         }
 
+        public async Task<IBaseResponse<List<Consultation>>> GetMyCons(string userName)
+        {
+            try
+            {
+                var user = _userRepository.GetAll().Include(x => x.MyConsultations).FirstOrDefault(x => x.Name == userName);
+
+                return new BaseResponse<List<Consultation>>()
+                {
+                    Data = user.MyConsultations.ToList(),
+                    StatusCode = StatusCode.OK
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Consultation>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+
+        }
+
+        public async Task<IBaseResponse<ConsultationViewModel>> GetCons(int id)
+        {
+            try
+            {
+                var cons = await _consultationRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
+
+                var response = new ConsultationViewModel()
+                {
+                    Id = cons.Id,
+                    Date = cons.Date,
+                    Description = cons.Description,
+                    Name = cons.Name,
+                };
+
+                return new BaseResponse<ConsultationViewModel>()
+                {
+                    Data = response,
+                    StatusCode = StatusCode.OK
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<ConsultationViewModel>()
+                {
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+
+            }
+        }
+
+        public async Task<IBaseResponse<bool>> UpdateCons(ConsultationViewModel consultationToUpdate)
+        {
+            try
+            {
+                var consultation = await _consultationRepository.GetAll().FirstOrDefaultAsync(x => x.Id == consultationToUpdate.Id);
+                if(consultation != null)
+                {
+                    consultation.Description = consultationToUpdate.Description;
+                    consultation.Date = consultationToUpdate.Date;
+                    consultation.Name = consultationToUpdate.Name;
+                }
+                _consultationRepository.Update(consultation);
+
+                return new BaseResponse<bool>()
+                {
+                    Data = true,
+                    StatusCode = StatusCode.OK
+                };
+            }
+            catch(Exception ex)
+            {
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
     }
 }
