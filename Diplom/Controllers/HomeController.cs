@@ -15,7 +15,7 @@ namespace Diplom.Controllers
         private readonly IUserService _userService;
         private readonly IConsultationService _consultationService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, 
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
             IUserService userService, IConsultationService consultationService)
         {
             _logger = logger;
@@ -39,7 +39,7 @@ namespace Diplom.Controllers
         public async Task<IActionResult> DeleteUser(int userId)
         {
             var response = await _userService.DeleteUser(userId);
-            
+
             if (response.StatusCode == Models.Account.StatusCode.OK)
             {
                 return RedirectToAction("GetUsers");
@@ -57,7 +57,26 @@ namespace Diplom.Controllers
             return View();
         }
 
-        public IActionResult GetConsultation(int id) => View(_context.Consultations.FirstOrDefault(x => x.Id == id));
+        public async Task<IActionResult> GetConsultation(int id)
+        {
+            var consultation = await _consultationService.GetCons(id);
+
+            var consViewModel = new ConsultationViewModel()
+            {
+                Id = consultation.Data.Id,
+                Name = consultation.Data.Name,
+                Date = consultation.Data.Date,
+                Description = consultation.Data.Description,
+                UserName = consultation.Data.UserName,
+            };
+            return View(consViewModel);
+        }
+
+        public async Task<IActionResult> Unsub(int consId)
+        {
+            var user = await _consultationService.Unsub(consId, User.Identity.Name);
+            return RedirectToAction("Search", "Search");
+        }
 
         public IActionResult AddCons() => View();
 
@@ -67,7 +86,7 @@ namespace Diplom.Controllers
 
             var response = await _consultationService.GetMyCons(userName);
 
-            if(response.StatusCode == Diplom.Models.Account.StatusCode.OK)
+            if (response.StatusCode == Diplom.Models.Account.StatusCode.OK)
             {
                 return View(response.Data.ToList());
             }
@@ -92,16 +111,16 @@ namespace Diplom.Controllers
         {
             string name = User.FindFirstValue(ClaimTypes.Name);
 
-            var response = await _consultationService.Sub(id,name);
+            var response = await _consultationService.Sub(id, name);
 
             if (response.StatusCode == Diplom.Models.Account.StatusCode.OK)
             {
-                return RedirectToAction("Index");
+                return View("Index", _context.Consultations.ToList());
             }
             return View("Index");
 
         }
-        
+
         public async Task<IActionResult> DeleteCons(int consId)
         {
             var response = await _consultationService.DeleteConsultation(consId);
@@ -117,7 +136,7 @@ namespace Diplom.Controllers
         {
             var response = await _consultationService.GetCons(consId);
 
-            if(response.StatusCode == Models.Account.StatusCode.OK)
+            if (response.StatusCode == Models.Account.StatusCode.OK)
             {
                 return View(response.Data);
             }
@@ -128,7 +147,7 @@ namespace Diplom.Controllers
         {
             consultation.Id = consId;
             var response = await _consultationService.UpdateCons(consultation);
-            if(response.StatusCode == Models.Account.StatusCode.OK)
+            if (response.StatusCode == Models.Account.StatusCode.OK)
             {
                 return RedirectToAction("MyCons");
             }

@@ -4,6 +4,7 @@ using Diplom.Services.Implementations.Repositories;
 using Diplom.Services.Interfaces;
 using Diplom.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Diplom.Services.Implementations
 {
@@ -14,7 +15,7 @@ namespace Diplom.Services.Implementations
         private readonly IBaseRepository<Subscription> _subRepository;
         private readonly ILogger<AccountService> _logger;
 
-        public ConsultationService(IBaseRepository<User> ur, IBaseRepository<Consultation> cr,IBaseRepository<Subscription> sr, ILogger<AccountService> logger)
+        public ConsultationService(IBaseRepository<User> ur, IBaseRepository<Consultation> cr, IBaseRepository<Subscription> sr, ILogger<AccountService> logger)
         {
             _userRepository = ur;
             _subRepository = sr;
@@ -64,10 +65,10 @@ namespace Diplom.Services.Implementations
             {
                 var cons = await _consultationRepository.GetAll().FirstOrDefaultAsync(x => x.Id == consId);
                 await _consultationRepository.Delete(cons);
-                
+
                 return new BaseResponse<bool>()
                 {
-                    Data= true,
+                    Data = true,
                     StatusCode = StatusCode.OK
                 };
             }
@@ -95,10 +96,10 @@ namespace Diplom.Services.Implementations
                 sub.Consultations.Add(consultation);
                 await _subRepository.Update(sub);
 
-                return new BaseResponse<bool>() 
-                { 
+                return new BaseResponse<bool>()
+                {
                     Data = true,
-                    StatusCode = StatusCode.OK ,
+                    StatusCode = StatusCode.OK,
                     Description = "Всё чётка"
                 };
             }
@@ -112,6 +113,8 @@ namespace Diplom.Services.Implementations
                 };
             }
         }
+
+
 
         public async Task<IBaseResponse<List<Consultation>>> GetMyCons(string userName)
         {
@@ -140,7 +143,7 @@ namespace Diplom.Services.Implementations
         {
             try
             {
-                var cons = await _consultationRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
+                var cons = await _consultationRepository.GetAll().Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
 
                 var response = new ConsultationViewModel()
                 {
@@ -148,6 +151,7 @@ namespace Diplom.Services.Implementations
                     Date = cons.Date,
                     Description = cons.Description,
                     Name = cons.Name,
+                    UserName = cons.User.Name,
                 };
 
                 return new BaseResponse<ConsultationViewModel>()
@@ -172,7 +176,7 @@ namespace Diplom.Services.Implementations
             try
             {
                 var consultation = await _consultationRepository.GetAll().FirstOrDefaultAsync(x => x.Id == consultationToUpdate.Id);
-                if(consultation != null)
+                if (consultation != null)
                 {
                     consultation.Description = consultationToUpdate.Description;
                     consultation.Date = consultationToUpdate.Date;
@@ -186,7 +190,7 @@ namespace Diplom.Services.Implementations
                     StatusCode = StatusCode.OK
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new BaseResponse<bool>()
                 {
@@ -196,5 +200,63 @@ namespace Diplom.Services.Implementations
             }
         }
 
+        public async Task<IBaseResponse<bool>> Unsub(int consId, string userName)
+        {
+            try
+            {
+
+                var user = await _userRepository.GetAll().Include(x => x.Subscription).
+                    ThenInclude(x => x.Consultations).FirstOrDefaultAsync(x => x.Name == userName);
+
+                var cons = await _consultationRepository.GetAll().FirstOrDefaultAsync(x => x.Id == consId);
+
+                user.Subscription.Consultations.Remove(cons);
+                _userRepository.Update(user);
+
+                return new BaseResponse<bool>()
+                {
+                    Data = true,
+                    StatusCode = StatusCode.OK
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>() { Data = false, Description = ex.Message, StatusCode = StatusCode.InternalServerError };
+            }
+        }
+
+        public async Task<IBaseResponse<bool>> IsSub(int consId, string userName)
+        {
+            try
+            {
+                var user = await _userRepository.GetAll().Include(x => x.Subscription).
+                    ThenInclude(x => x.Consultations).FirstOrDefaultAsync(x => x.Name == userName);
+
+                if (!user.Subscription.Consultations.Where(x => x.Id == consId).ToList().IsNullOrEmpty())
+                {
+                    return new BaseResponse<bool>()
+                    {
+                        Data = true,
+                        StatusCode = StatusCode.OK,
+                    };
+                }
+                else
+                {
+                    return new BaseResponse<bool>()
+                    {
+                        Data = false,
+                        StatusCode = StatusCode.OK,
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<bool>()
+                {
+                    StatusCode = StatusCode.InternalServerError,
+                    Description = ex.Message
+                };
+            }
+        }
     }
 }

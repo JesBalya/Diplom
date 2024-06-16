@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Search";
 }
 @model List<Diplom.Models.Entity.Consultation>;
@@ -7,12 +6,18 @@
 <div class="text-center">
     <h1 class="display-4">Консультации</h1>
 </div>
-@foreach (var cons in Model){
-<div class="text-center" style="height:100%">
-    <div style="padding-top: 40px; padding-bottom: 40px">
-        <h1>@cons.Name</h1>
-        <p>Описание: @cons.Description</p>
-        <p>Дата: @cons.Date</p>
+@foreach (var cons in Model)
+{
+    <div class="text-center" style="height:100%">
+        <div style="padding-top: 40px; padding-bottom: 40px">
+            <h1>@cons.Name</h1>
+            <p>Описание: @cons.Description</p>
+            <p>Дата: @cons.Date</p>
+            <form asp-controller="Home" asp-action="Unsub" asp-route-consId="@cons.Id">
+                <button type="submit" class="btn btn-sm btn-danger">
+                    Отписаться
+                </button>
+            </form>
+        </div>
     </div>
-</div>
 }

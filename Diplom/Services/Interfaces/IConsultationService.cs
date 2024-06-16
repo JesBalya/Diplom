@@ -11,5 +11,7 @@ namespace Diplom.Services.Interfaces
         Task<IBaseResponse<List<Consultation>>> GetMyCons(string userName);
         Task<IBaseResponse<ConsultationViewModel>> GetCons(int id);
         Task<IBaseResponse<bool>> UpdateCons(ConsultationViewModel model);
+        Task<IBaseResponse<bool>> Unsub(int consId, string userName);
+        Task<IBaseResponse<bool>> IsSub(int consId, string userName);
     }
 }

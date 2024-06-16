@@ -1,18 +1,33 @@
-﻿@{
+﻿﻿@{
     ViewData["Title"] = "HeheBoy";
 }
-@model Diplom.Models.Entity.Consultation;
+@model Diplom.ViewModels.ConsultationViewModel;
+@inject Diplom.Services.Interfaces.IConsultationService ConsService;
 
 <div class="text-center" style="height:100%">
     <div style="padding-top: 40px; padding-bottom: 40px">
         <h1>@Model.Name</h1>
         <p>Описание: @Model.Description</p>
         <p>Дата: @Model.Date</p>
-        <form asp-controller="Home" asp-action="Sub" asp-route-id="@Model.Id" method="post">
-            <button type="submit" class="btn btn-sm btn-danger">
-                Записаться
-            </button>
-        </form>
+        @if (User.Identity.Name != Model.UserName)
+        {
+            var a = await ConsService.IsSub(Model.Id, User.Identity.Name);
+            @if (a.Data)
+            {
+                <form asp-controller="Home" asp-action="Unsub" asp-route-consId="@Model.Id">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Отписаться
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form asp-controller="Home" asp-action="Sub" asp-route-id="@Model.Id">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Записаться
+                    </button>
+                </form>
+            }
+        }
     </div>
-    
 </div>
